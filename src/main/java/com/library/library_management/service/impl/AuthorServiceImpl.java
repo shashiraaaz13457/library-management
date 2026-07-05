@@ -48,9 +48,26 @@ public class AuthorServiceImpl implements AuthorService{
         return mapToResponseDto(author);
     }
 
+    @Override
     public List<AuthorResponseDto> getAllAuthors(){
         List<Author> authors = authorRepository.findAll();
             return authors.stream().map(this::mapToResponseDto).toList();
+    }
+
+    @Override
+    public AuthorResponseDto updateAuthor(Long id , AuthorRequestDto dto) {
+        Author author = authorRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Author not found with id : " + id));
+
+        author.setName(dto.getName());
+        author.setEmail(dto.getEmail());
+        Author updatedAuthor =  authorRepository.save(author);
+        return mapToResponseDto(updatedAuthor);
+    }
+
+    @Override
+    public void deleteAuthor(Long id) {
+        Author author = authorRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Author not found with this id : " + id));
+        authorRepository.delete(author);
     }
 
     //Helper method for one shared Object.
